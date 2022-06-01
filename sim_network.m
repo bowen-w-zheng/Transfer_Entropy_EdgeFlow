@@ -1,4 +1,4 @@
-function [r,g,p,s] = sim_network(W, c, transfer_func, SampleTime, dt, sim_num)
+function [r,g,p,s] = sim_network(W, c, b, transfer_func, SampleTime, dt, sim_num)
 %%%%%
 
 % W: Expecting a square matrix. W_{j,i} represents the weights from neuron i to neuron j. This should be the connection weight matrix. 
@@ -18,10 +18,11 @@ r = zeros(n, length(time_step), sim_num);
 % Prepare the signal 
 g = normrnd(0,1,1, length(time_step),sim_num); % common drive
 p = normrnd(0,1,n, length(time_step),sim_num); % private drive
-s = dt*(sqrt(c) * g + sqrt(1-c) *(p)); 
+s = sqrt(c) * g + sqrt(1-c) *(p); 
+
 
 % Updating rule 
-update_rule = @(r, s, W) r + transfer_func(W * r + s);
+update_rule = @(r, s, W) r + dt* (-r) + transfer_func((b +W * r)*dt + s*sqrt(dt));
 
 for n = 1:sim_num
     % n
