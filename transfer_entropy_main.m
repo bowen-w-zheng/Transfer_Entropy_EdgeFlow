@@ -1,4 +1,4 @@
-function TE = transfer_entropy_main(X,Y,n,m)
+function TE = transfer_entropy_main(Dest,Source,n,m,tau, method)
 %%%
 % Calculate the transfer entropy from Y to X for the whole time series
 % X: expecting a k by t matrix for multiple runs of a random process,
@@ -8,13 +8,17 @@ function TE = transfer_entropy_main(X,Y,n,m)
 % n: expecting an integer, how many time steps of past history for X
 % m: expecting an integer, how many time steps of past history for Y
 %%%
-
-    [~,step] = size(X);
-    TE = zeros(1, step-n);
-    for i = 1:step-n
-        X_t = X(:,i+n);
-        Y_m = Y(:,i+n-m:i+n-1);
-        X_n = X(:,i:i+n-1);
-        TE(i) = transfer_entropy_gaussian(X_t,Y_m,X_n);
-    end
-end 
+    javaaddpath('D:\Transfer_Entropy\infodynamics-dist-1.5/infodynamics.jar')
+    if method == "Gaussian"
+        TE = transfer_entropy_Gaussian(Dest, Source, n, m, tau);
+    end 
+    if method == "KSG"
+        TE = transfer_entropy_KSG(Dest, Source, n, m, tau);
+    end 
+    if method == "Kernel"
+        TE = transfer_entropy_Kernel(Dest, Source, n, m, tau);
+    end 
+    if method == "Binary"
+        TE = transfer_entropy_Binary(Dest, Source, n, m, tau);
+    end 
+end
